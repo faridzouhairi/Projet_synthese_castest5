@@ -1,0 +1,44 @@
+
+@given(u'Je suis connecté a l\'application avec un compte utilisateur')
+def step_impl(context):
+    context.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    context.driver.maximize_window()
+    context.browser.get("http://localhost:8087")
+    username = context.browser.find_element(By.XPATH, "xpath=//input[@name='username'']")
+    password = context.browser.find_element(By.XPATH, "xpath=//input[@name='password']")
+    username.send_keys("admin")
+    password.send_keys("12345678")
+    login_button = context.browser.find_element(By.XPATH, "//button[@type='button']")
+    login_button.click()
+    time.sleep(10)
+
+
+@when(u'Je clique sur le lien \'Fichiers partagés')
+def step_impl(context):
+    fichiersPartages = context.browser.find_element(By.XPATH, "//a[@href='/share/page/context/shared/sharedfiles']")
+    fichiersPartages.click()
+
+
+@when(u'Je clique sur le fichier "FichierTest.jpg"')
+def step_impl(context):
+    fichier = context.browser.find_element(By.XPATH, "//a[text()='Fichier Test']")
+    fichier.click()
+
+
+@when(u'Je clique sur \'Voir dans le navigateur\'')
+def step_impl(context):
+    voir_dans_navigateur = context.browser.find_element(By.XPATH, "//a[@title='View In Browser']/span")
+    voir_dans_navigateur.click()
+
+
+@then(u'je vais etre rederige vers une page du navigateur et verifier contenu')
+def step_impl(context):
+    page_navigateur = context.driver.switch_to.window
+    titre_page = gettext.find(By.XPATH, "//pre[text()='Test']")
+
+
+@then(u'Je dois me deconnecter et fermer tous les navigateurs')
+def step_impl(context):
+    logout = context.browser.find_element(By.ID, 'id=HEADER_USER_MENU_POPUP')
+    logout.click()
+    close_allBrowsers = context.driver.close()
